@@ -104,3 +104,4 @@ dist
 .tern-port
 environments/development.env
 environments/production.env
+src/public/uploads/

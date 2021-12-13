@@ -7,6 +7,8 @@ const restrauntSchema = new mongoose.Schema({
         required: true
     },
     restrauntAddress: {
+        // type: String,
+        // required: true
         street:{
             type: String,
             required: true
@@ -28,17 +30,22 @@ const restrauntSchema = new mongoose.Schema({
 
 
     },
-    restrauntTiming: {
-    restrauntopeningTiming: {
+     restrauntTiming: {
+        //  type: String,
+        //  required: true,
+    openTiming: {
         type: String,
         required: true
     },
-    restrauntclosingTiming:{
+    closeTiming:{
         type: String,
         required: true
     },
 },
-    
+    image:{
+        type: String,
+        required: true
+    },
     createAt: {
         type: Date,
         default: Date.now
