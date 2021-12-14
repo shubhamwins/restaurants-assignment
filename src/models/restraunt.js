@@ -33,13 +33,13 @@ const restrauntSchema = new mongoose.Schema({
      restrauntTiming: {
         //  type: String,
         //  required: true,
-    openTiming: {
-        type: String,
-        required: true
+    weekTiming: {
+        type: Array,
+        
     },
-    closeTiming:{
-        type: String,
-        required: true
+    holidayTiming:{
+        type: Array,
+        
     },
 },
     image:{

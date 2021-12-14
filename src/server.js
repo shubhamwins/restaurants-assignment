@@ -11,7 +11,7 @@ const routes = require("./route");
 const mongoose = require("mongoose");
 
 app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(express.static('../public'));
 
 app.use("/api", routes);
 

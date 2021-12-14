@@ -6,14 +6,15 @@ const multer = require("multer");
 //create disk storage to show the picture
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './public/uploads/')
+        cb(null, '../public/uploads/')
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + file.originalname);
     }
 })
+
 const upload = multer({ storage: storage });
-const { addRestraunt , listRestraunts , updateRestraunt, particularRestraunt, deleteRestraunt} = require("../services/restraunt");
+const { addRestraunt , listRestraunts , updateRestraunt, particularRestraunt, deleteRestraunt} = require("../services/servicesRestraunt");
 
 const router = express.Router();
 
