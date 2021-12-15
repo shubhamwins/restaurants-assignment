@@ -1,5 +1,7 @@
 const Restraunt = require("../models/restraunt");
 const joi = require("joi");
+const path = require("path");
+const fs = require("fs");
 const listRestraunts = async (req, res, next) => {
   //   const { user, content } = req.body;
   try {
@@ -27,22 +29,33 @@ const restraunt_validate = joi.object({
 
   }),
   restrauntTiming: joi.object().keys({
-    weekTiming: joi.array().optional(),
-    holidayTiming: joi.array().optional(),
+    weekTiming: joi.array().required(),
+    holidayTiming: joi.array().required(),
   }),
-  
+  //image: joi.string().required()
   
 })
 
 
 const addRestraunt = async (req, res, next) => {
+  
+  if(!req.file){
+    res.json({error: "image not found"  ,status:500});
+    next()
+  }
+  else{
   const imagename = req.file.filename;
   const url = `http://localhost:4000/uploads/${imagename}`;
 
   const { restrauntName, restrauntAddress, restrauntTiming } = req.body;
-  console.log(req.file);
-
-
+  
+  console.log( restrauntTiming.weekTiming[0])
+  //console.log(req.file);
+  //console.log( restrauntTiming)
+  if(restrauntTiming.weekTiming[0]===""||restrauntTiming.holidayTiming[0]===""){
+    res.json({error: "timing not found"  ,status:500});
+  }
+else{
 
 
 
@@ -59,8 +72,7 @@ const addRestraunt = async (req, res, next) => {
       image: url,
 
     });
-
-
+    
     const result = { responseCode: 200, responseMessgae: "List of Restraunts", restrauntData: restraunt };
     res.json({ result });
     
@@ -69,15 +81,24 @@ const addRestraunt = async (req, res, next) => {
   catch (error) {
     console.log(error)
     let errors = {}
+    console.log(error.details)
     error.details.map(item => {
       errors[item.path] = item.message;
     })
 
     res.status(400).send({ errors: errors });
   }
+}
+  }
 };
 
 const updateRestraunt = async (req, res, next) => {
+  
+  if(!req.file){
+    res.json({error: "image not found"  ,status:500});
+    next()
+  }
+  else{
   const imagename = req.file.filename;
   const url = `http://localhost:4000/uploads/${imagename}`;
 
@@ -87,18 +108,45 @@ const updateRestraunt = async (req, res, next) => {
   console.log(req.body);
 
   try {
+   
     let options = { abortEarly: false };
     let { error, value } = await restraunt_validate.validate(req.body, options)
     if (error) {
       throw (error)
     }
+    const post = await Restraunt.findById({"_id": id})
+    console.log(post)
+    console.log("hello1")
     // Insert one new `Character` document
-    let restUpdate = await Restraunt.updateOne({ _id: id }, {
+    let restUpdate = await Restraunt.updateOne({_id: id }, {
       restrauntName: restrauntName,
       restrauntAddress: restrauntAddress,
       restrauntTiming: restrauntTiming,
       image: url,
     });
+    //For image deletion
+    // getting image name
+   const imgLink = post.image
+   console.log("hello")
+      console.log(imgLink)
+   const removedStr = `http://localhost:4000/uploads/`;
+   // getting image name from image link
+    const imgName = imgLink.replace(removedStr,"")
+    console.log(imgName)
+    
+    
+    
+      // getting path to picture
+    const imgPath = path.join(__dirname, '../../public/uploads/',imgName)
+    console.log(imgPath);
+    
+    console.log(fs.unlink)
+     fs.unlink(imgPath, (error) =>{
+      if (error){
+              console.log('error in deleting image')
+      }
+     })
+     
     // other service call (or same service, different function can go here)
     res.json({ restUpdate });
   } catch (error) {
@@ -110,6 +158,8 @@ const updateRestraunt = async (req, res, next) => {
 
     res.status(400).send({ errors: errors });
   }
+}
+
 };
 
 const particularRestraunt = async (req, res, next) => {
